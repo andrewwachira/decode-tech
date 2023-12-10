@@ -1,9 +1,16 @@
 import Layout from '@/components/Layout';
+import { Alert } from 'flowbite-react';
+import { useState } from 'react';
+
 export default function Home() {
+  const [ error,setError] = useState(true);
   return (
-    <Layout >
+    <Layout title="Home" >
       <h1 className=''>Decode Technologies</h1>
-      <p>Whereas disregard and contempt for human rights have resulted</p>
+
+      { error && <Alert color="failure" onDismiss={ ()=>setError(false) }>
+        <span className="font-medium">Error!</span> This is an error alert example.
+      </Alert>}
     </Layout>
   )
 }
