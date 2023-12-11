@@ -3,10 +3,10 @@ import Layout from '@/components/Layout';
 import Link from 'next/link';
 import { useSession,signIn,signOut } from 'next-auth/react';
 import { Alert } from 'flowbite-react';
+import { useRouter } from 'next/router';
 import {useForm} from "react-hook-form";
 import axios from "axios";
 import { getError } from '@/utils/error';
-import { flushSync } from "react-dom";
 
 function Login() {
     const {register,formState: { errors },handleSubmit,} = useForm();
@@ -16,10 +16,12 @@ function Login() {
     const {data} = useSession();
     const [error,setError] = useState("");
     const alertErr = useRef();
+    const router = useRouter();
+    const {redirect} = router.query
 
     const handleGoogleSignIn = async() =>{
         setLoading(true);
-        await signIn("google",{ redirect:"http://localhost:3000"});
+        await signIn("google",{ callbackUrl: `http://localhost:3000/${redirect||""}`});
     }
     const handleEmailLogin = async({emailLoginInput,passwordLoginInput}) => {
         setLoading(true);
@@ -63,13 +65,13 @@ function Login() {
                 {
                     data?.user?.id ?
                     <>
-                        <h3 className='text-center text-3xl my-9'>You are already logged in</h3>
+                        <h3 className='text-center text-3xl my-9'>You are logged in</h3>
                         <button className='small-button m-3'><Link href="/accounts/profile">Go to my profile</Link></button>
                         <button className='small-button m-3' onClick={()=> signOut({callbackUrl: 'http://localhost:3000'}) }>Logout</button>
                     </>
                     :
                     <>
-                        <form id='login' className={isLoginActive ? "absolute" : "hidden"} onSubmit={handleSubmit(handleEmailLogin)}>
+                        <form id='login' className={isLoginActive ? "absolute floater" : "hidden"} onSubmit={handleSubmit(handleEmailLogin)}>
 
                             <div className='flex'>
                                 <div className='w-full'>
@@ -103,7 +105,7 @@ function Login() {
                             <button className='big-button'>Log In</button>
                         </form>
 
-                        <form id='signup'className={isLoginActive ? "hidden" : "absolute"} onSubmit={handleSubmit2(handleEmailSignup)}>
+                        <form id='signup'className={isLoginActive ? "hidden" : "absolute floater"} onSubmit={handleSubmit2(handleEmailSignup)}>
 
                             <div className='flex justify-around'>
                                 <div className='w-full'>

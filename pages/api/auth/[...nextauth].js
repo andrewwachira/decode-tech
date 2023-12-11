@@ -10,7 +10,6 @@ export default nextAuth({
     },
     callbacks:{
         async signIn({ account, profile }) {
-           let user;
             if (account.provider === "google") {
                 if(!profile){
                     throw new Error("There is no such profile")
@@ -18,21 +17,21 @@ export default nextAuth({
                 try {
                     const client = await pool.connect();
                     const {rows} = await client.query('SELECT * FROM Users WHERE email = $1',[profile.email]);
-                    user = rows[0];
+                    let user = rows[0];
                     if(!user){
                         user = await client.query(
                             'INSERT INTO users (name, email, user_photo, google_signin_id, is_verified) VALUES($1, $2, $3, $4, $5) RETURNING *',
                             [ profile.name, profile.email,profile.picture,profile.sub, true]
                         );
                     }
-                   
-                    return user;
+                    return true;
                 } catch (error) {
                     console.log(error);
                     return false
                 }
+            }else{
+                return true
             }
-            return user 
           },
 
         async jwt({token,user}){
@@ -66,7 +65,7 @@ export default nextAuth({
                         name:user.name,
                         email:user.email,
                         image:user.user_photo,
-                        isAdmin:user.isadmin,
+                        isadmin:user.isadmin,
                     }
                 }
                

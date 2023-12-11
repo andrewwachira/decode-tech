@@ -6,8 +6,9 @@
 * {
   padding: 0;
   margin: 0;
-  font-family: "Poppins";
+  font-family: 'Poppins',sans-serif;
   font-size: 16px;
+  color: #333;
 }
 body{
   background-color: #ffffff;
@@ -15,7 +16,6 @@ body{
   background-image: radial-gradient(#ebe4e4 1px, #fffdfd 1px);
   background-size: 24px 34px;
 }
-
 .navbar{
   margin: auto;
   position: fixed;
@@ -37,11 +37,10 @@ p{
   font-weight: 800;
   font-family: "IBM Plex Mono";
 }
-/* login screen */
-form{
+.floater {
   height: fit-content;
   width: fit-content;
-  min-width: 450px;
+  min-width: 400px;
   background-color: rgba(255,255,255,0.1);
   border-radius: 10px;
   backdrop-filter: blur(1px);
@@ -50,8 +49,11 @@ form{
   padding: 40px 35px;
   margin-bottom: 30px;
 }
+/* login screen */
+form{
+
+}
 form *{
-  font-family: 'Poppins',sans-serif;
   color: #333;
   letter-spacing: 0.5px;
   outline: none;
@@ -106,7 +108,7 @@ width: 100%;
 background: red;
 width: 100%;
 border-radius: 3px;
-padding: 5px 10px 10px 5px;
+padding: 10px;
 background-color: rgba(255,255,255);
 color: #333;
 text-align: center;
@@ -122,3 +124,4 @@ button:hover{
 .social i{
 margin-right: 4px;
 }
+/* profile screen */
