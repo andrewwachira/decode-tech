@@ -8,7 +8,7 @@ import { signOut } from 'next-auth/react';
 
 function Layout({title,children}) {
     const {data,status} = useSession();
-    console.log(data);
+
     return (
         <>
             <Head>

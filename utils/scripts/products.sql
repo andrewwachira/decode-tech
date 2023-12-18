@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Products
 (
-    owner UUID NOT NULL,
+    admin INTEGER NOT NULL,
     name VARCHAR(255) NOT NULL,
     brand VARCHAR(255) NOT NULL,
     category VARCHAR(255) NOT NULL,
@@ -10,10 +10,10 @@ CREATE TABLE IF NOT EXISTS Products
     count_in_stock INTEGER NOT NULL,
     rating INTEGER NOT NULL DEFAULT 0,
     reviews JSONB[],
-    record_no  SERIAL NOT NULL,
-    product_id UUID DEFAULT uuid_generate_v4() NOT NULL,
+    product_id  SERIAL NOT NULL,
+    discount INTEGER,
+    condition VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (product_id),
-    FOREIGN KEY (owner),
-    REFERENCES Users(id),
+    FOREIGN KEY (admin) REFERENCES Users(id)
 )

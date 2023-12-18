@@ -1,16 +1,19 @@
-import '@/styles/globals.css'
+import "../styles/globals.css"
 import { SessionProvider, useSession } from "next-auth/react"
-import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { EdgeStoreProvider } from '../utils/edgestore';
+import { Bars } from  'react-loader-spinner'
 
 export default function App({ Component, pageProps:{session, ...pageProps} }) {
   return (
     <SessionProvider session={session}>
       {
         Component.auth ? (
-          <Auth adminOnly = {Component.auth.adminOnly} stockistOnly = {Component.auth.stockistOnly}>
-            <Component {...pageProps} />
-          </Auth>
+          <EdgeStoreProvider>
+            <Auth adminOnly = {Component.auth.adminOnly}>
+                <Component {...pageProps} />
+            </Auth>
+          </EdgeStoreProvider>
         ): 
         ( <Component {...pageProps} />)
       }
@@ -28,13 +31,11 @@ function Auth({children,adminOnly}){
   });
   if (status==="loading"){
     return(
-      <div className="loader">
-        <div className="lds-circle">
-          <div>
-              <Image src={`/images/logo.png`} alt="logo" width={250} height={250}></Image>
-          </div>
+      <div className='flex w-full h-screen items-center justify-center'>
+        <div className=' flex items-center'>
+          <Bars width={50} height={50} color="#3b82f6" />
+          <span className='mx-3'>Loading ...</span>
         </div>
-        <p>Loading...</p>
       </div>
     ) 
   }

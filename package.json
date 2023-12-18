@@ -3,24 +3,34 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev ",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@edgestore/react": "^0.1.4",
+    "@edgestore/server": "^0.1.4",
+    "@reduxjs/toolkit": "^2.0.1",
+    "@uploadthing/react": "^6.0.2",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
+    "cloudinary": "^1.41.0",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.3.1",
+    "edgestore": "^1.0.3",
     "flowbite": "^2.2.0",
     "flowbite-react": "^0.7.0",
+    "js-cookie": "^3.0.5",
     "next": "14.0.3",
     "next-auth": "^4.24.5",
     "pg": "^8.11.3",
     "react": "^18",
     "react-dom": "^18",
-    "react-hook-form": "^7.49.0"
+    "react-hook-form": "^7.49.0",
+    "react-loader-spinner": "^6.1.0",
+    "uploadthing": "^6.1.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",

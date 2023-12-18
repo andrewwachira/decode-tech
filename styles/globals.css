@@ -11,7 +11,7 @@
   color: #333;
 }
 body{
-  background-color: #ffffff;
+  background-color: #d1cece;
   opacity: 1;
   background-image: radial-gradient(#ebe4e4 1px, #fffdfd 1px);
   background-size: 24px 34px;
@@ -50,9 +50,6 @@ p{
   margin-bottom: 30px;
 }
 /* login screen */
-form{
-
-}
 form *{
   color: #333;
   letter-spacing: 0.5px;
@@ -72,7 +69,7 @@ label{
   font-size: 16px;
   font-weight: 500;
 }
-input{
+input, textarea{
   display: block;
   height: 50px;
   width: 100%;

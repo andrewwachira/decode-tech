@@ -2,7 +2,7 @@ import nextAuth from "next-auth";
 import bcrypt from "bcrypt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { pool } from "@/utils/db";
+import { pool } from "../../../utils/db";
 
 export default nextAuth({ 
     session:{

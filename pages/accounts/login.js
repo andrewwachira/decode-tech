@@ -1,12 +1,12 @@
 import React,{useState,useRef}  from 'react';
-import Layout from '@/components/Layout';
+import Layout from '../../components/Layout';
 import Link from 'next/link';
 import { useSession,signIn,signOut } from 'next-auth/react';
 import { Alert } from 'flowbite-react';
 import { useRouter } from 'next/router';
 import {useForm} from "react-hook-form";
 import axios from "axios";
-import { getError } from '@/utils/error';
+import { getError } from '../../utils/error';
 
 function Login() {
     const {register,formState: { errors },handleSubmit,} = useForm();
@@ -25,6 +25,7 @@ function Login() {
     }
     const handleEmailLogin = async({emailLoginInput,passwordLoginInput}) => {
         setLoading(true);
+        setError(null);
         const result = await signIn("credentials",{
             redirect:false,
             email:emailLoginInput,
