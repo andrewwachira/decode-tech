@@ -2,36 +2,15 @@
 import {pool} from "../../utils/db";
 
 export default async  function handler(req, res) {
-  const profile = {
-    iss: 'https://accounts.google.com',
-    azp: '652275461641-10j13fpqei2vn4peg56eco8ltipr0ckc.apps.googleusercontent.com',
-    aud: '652275461641-10j13fpqei2vn4peg56eco8ltipr0ckc.apps.googleusercontent.com',
-    sub: '111201777863807079766',
-    email: 'andrewwachira1@gmail.com',
-    email_verified: true,
-    at_hash: 'o9JkVqYQK52uFMbFvzGUxg',
-    name: 'Andrew',
-    picture: 'https://lh3.googleusercontent.com/a/ACg8ocKexssQUhFJTmxoB8fPwdtflYCy0CciMm69wXofGUQdhA=s96-c',
-    given_name: 'Andrew',
-    locale: 'en',
-    iat: 1702160886,
-    exp: 1702164486
-  }
+  
   try {
     const client = await pool.connect();
-    const {rows} = await client.query('SELECT * FROM Users WHERE email = $1',[profile.email]);
-    const  user  = rows[0];
-    if(!user){
-      const newUser = await client.query(
-        'INSERT INTO users (name, email, user_photo) VALUES ($1, $2, $3) RETURNING *',
-        [profile.name, profile.email, profile.picture]
-      );
-      
-      console.log(newUser);
-    }
+    await client.query('CREATE TABLE IF NOT EXISTS Users(name VARCHAR(255) NOT NULL,email VARCHAR(255) UNIQUE NOT NULL,phone VARCHAR(255),password VARCHAR(255),id  SERIAL NOT NULL,user_photo VARCHAR(255),isadmin BOOLEAN DEFAULT false,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,google_signin_id VARCHAR(255),isverified BOOLEAN DEFAULT false,PRIMARY KEY (id))')
+    await client.query('CREATE TABLE IF NOT EXISTS Products (admin INTEGER NOT NULL,name VARCHAR(255) NOT NULL,brand VARCHAR(255) NOT NULL,category VARCHAR(255) NOT NULL,price INTEGER NOT NULL,description VARCHAR(255),image VARCHAR(255) NOT NULL,count_in_stock INTEGER NOT NULL,rating INTEGER NOT NULL DEFAULT 0,reviews JSONB[],product_id  SERIAL NOT NULL,discount INTEGER,condition VARCHAR(255) NOT NULL,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY (product_id),FOREIGN KEY (admin) REFERENCES Users(id))');    
+    const newUser = await client.query('INSERT INTO users (name, email, phone, password, isadmin, isverified) VALUES ($1, $2, $3) RETURNING *',["Admin User", "decode3.it@gmail.com", "254711294124","$2b$10$YTAkTsMGst0mUwuJemis4u1/Sa/kDb3SYYClQPMvhz0d.cx5idCJ.",true,true]);
+    res.json({adminUser: newUser.rows[0],database:process.env.POSTGRES_DATABASE});
   } catch (error) {
-    console.log(error);
+    res.json({error:error,database:process.env.POSTGRES_DATABASE});
   }
   
-  res.status(200).json({ clientID: process.env.GOOGLE_CLIENT_ID, })
 }

@@ -5,9 +5,9 @@ const handler = async (req,res) => {
 
     if(req.method === "DELETE"){
         const session = await getSession({req});
-        // if(!session.user.isadmin){
-        //     return res.status(403).send({message:"Admin access only"})
-        // }
+        if(!session.user.isadmin){
+            return res.status(403).send({message:"Admin access only"})
+        }
         try{
             await pool.query('DELETE FROM  products WHERE product_id = $1',[req.query.id]);
             res.send({message:"success"});
