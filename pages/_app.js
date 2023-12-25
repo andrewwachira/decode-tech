@@ -2,11 +2,15 @@ import "../styles/globals.css"
 import { SessionProvider, useSession } from "next-auth/react"
 import { useRouter } from 'next/router';
 import { EdgeStoreProvider } from '../utils/edgestore';
-import { Bars } from  'react-loader-spinner'
+import { Bars } from  'react-loader-spinner';
+import { Provider } from "react-redux";
+import { wrapper } from "../redux/store";
 
 export default function App({ Component, pageProps:{session, ...pageProps} }) {
+  const {store} = wrapper.useWrappedStore(pageProps);
   return (
     <SessionProvider session={session}>
+      <Provider store={store}>
       {
         Component.auth ? (
           <EdgeStoreProvider>
@@ -17,6 +21,7 @@ export default function App({ Component, pageProps:{session, ...pageProps} }) {
         ): 
         ( <Component {...pageProps} />)
       }
+      </Provider>
     </SessionProvider>
   )
 }

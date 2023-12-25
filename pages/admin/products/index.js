@@ -3,37 +3,26 @@ import Layout from '../../../components/Layout'
 import { Alert,Modal,Button,Table } from 'flowbite-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import axios from 'axios';
 import { Bars } from 'react-loader-spinner';
-import Cookies from 'js-cookie';
 import { getError } from '../../../utils/error';
+import {useDispatch,useSelector} from "react-redux";
+import { product2Edit, fetchProducts } from '../../../redux/slices/productsSlice';
 
 function AdminProducts() {
   const router = useRouter();
-  const [productsLoading,setProductsLoading] = useState(false);
-  const [products,setProducts] = useState([]);
-  const [error,setError] = useState(null);
+  const {products,loading:productsLoading,error} = useSelector(state =>  state.products);
   const [success,setSuccess] = useState(null);
   const [openModal,setOpenModal] = useState(false);
   const [product2Del,setProduct2Del] = useState(null);
-
+  const dispatch = useDispatch();
+  
   useEffect(()=>{
-    try {
-       async function getProducts(){
-          setProductsLoading(true);
-          const {data} = await axios.get("/api/products");
-          setProductsLoading(false);
-          setProducts(data);
-        }
-        getProducts();
-    } catch (error) {
-      console.log(error);
-      setError(getError(error));
+    dispatch(fetchProducts());
     }
-  },[]);
+  ,[dispatch]);
 
   const handleEdit = (product) => {
-    Cookies.set("editProduct",JSON.stringify(product));
+    dispatch(product2Edit(product));
     router.push("/admin/products/edit");
   }
   const confirmDelete = (product) => {
@@ -70,30 +59,29 @@ function AdminProducts() {
             {success && <Alert color="success" className='w-fit m-auto px-4' onDismiss={()=>setSuccess(null)}>{success}</Alert>}
             {error && <Alert color="failure"  className='w-fit m-auto px-4' onDismiss={()=>setError(null)}></Alert>}
             <h1 className='text-center text-3xl m-7'>Products</h1>
-            <div className='flex justify-center'>
-                <Button.Group className=' w-fit'>
-
+            <div className='flex justify-center overflow-x-auto'>
+                <Button.Group className='w-fit'>
                         <Button color='light' onClick={()=>router.push("/admin/dashboard")}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mx-2 h-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mr-1 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
                             </svg>
                             Dashboard
                         </Button>
                         <Button color='light'  className="bg-blue-100" onClick={()=>router.push("/admin/products")}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mx-2 h-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mr-1 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
                             </svg>
                             Products
                         </Button>
                         <Button color='light' onClick={()=>router.push("/admin/users")}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mx-2 h-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mr-1 h-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                                 </svg>
                                 Users
                         </Button>
                         <Button color='light' onClick={()=>router.push("/admin/orders")}>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mx-2 h-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mr-1 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                             </svg>
                             Orders
@@ -103,7 +91,7 @@ function AdminProducts() {
             <div className='my-7'>
               <Link href="/admin/products/create">
                 <Button color="light" className='w-fit my-7'>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mx-2 h-6">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mr-1 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
                 Create New Product
@@ -128,8 +116,8 @@ function AdminProducts() {
                       <Table.HeadCell><span className="sr-only">Delete</span>Action 2</Table.HeadCell>
                     </Table.Head>
                     <Table.Body className="divide-y">
-                      { products && products.map((product) => (
-                        <Table.Row key={product.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                      { products && products?.map((product) => (
+                        <Table.Row key={product.product_id} className="bg-white border-b">
                           <Table.Cell>{product.name} </Table.Cell>
                           <Table.Cell>{product.brand}</Table.Cell>
                           <Table.Cell>{product.category}</Table.Cell>

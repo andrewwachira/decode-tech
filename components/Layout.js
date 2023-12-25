@@ -8,7 +8,7 @@ import { signOut } from 'next-auth/react';
 
 function Layout({title,children}) {
     const {data,status} = useSession();
-
+    const innerWidth = window.innerWidth
     return (
         <>
             <Head>
@@ -20,17 +20,20 @@ function Layout({title,children}) {
                 <header className='mb-[110px]'>
                     <nav className='navbar bg-blue-200'>
                         <div className="flex justify-between items-center m-5">
-                            <Link className='px-4 flex flex-col items-center' href="/checkout/cart">
+                            <Link className='px-2 flex flex-col items-center' href="/checkout/cart">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                                 </svg>
                                 <span className='p-1 hover:underline'>Cart</span>
                             </Link>
-                            <Link href="/" className='flex items-center justify-center' passHref>
-                                <h1 className='mx-3 text-2xl font'>DECODE Techlonolgies</h1>
-                                {/* <Image src="/images/logos and icons/decode-logo.png"  alt='decode logo' width={80} height={80}/> */}
+                            <Link href="/" className='flex items-between justify-center' passHref>
+                                { innerWidth > 400 ? 
+                                    <h1 className='text-2xl font'>DECODE Techlonolgies</h1>
+                                    : 
+                                    <Image src="/images/logos and icons/decode-logo.png"  alt='decode logo' width={80} height={80}/> 
+                                }
                             </Link>
-                            <div className='px-4 flex flex-col items-center'>
+                            <div className=' w-fit mr-3 flex flex-col items-center'>
                                 {
                                     data?.user?.image ?
                                     <img src={`${data?.user?.image}`} alt="User image" width={50} height={50} className='rounded-full' />

@@ -3,13 +3,11 @@ import Layout from '../../../components/Layout'
 import { Button, Card , Spinner,Alert} from 'flowbite-react';
 import Link from 'next/link';
 import {useForm} from "react-hook-form";
-import Image from 'next/image';
 import { getError } from '../../../utils/error';
 import { useEdgeStore } from '../../../utils/edgestore';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
+import { useSelector } from 'react-redux';
 
 function EditProduct() {
     const {register,formState: { errors },handleSubmit,watch,setValue} = useForm();
@@ -29,20 +27,19 @@ function EditProduct() {
     const countInStock = watch("countInStock");
     const condition  =  watch("condition");
     const {data:session} = useSession();
-    const router = useRouter();
-
+    const {product2Edit} = useSelector(state => state.products);
+    
     useEffect(()=>{
-        if(Cookies.get("editProduct")){
-            console.log(Cookies.get("editProduct"));
-            let data = JSON.parse("editProduct");
-            setValue('productName',data.productName);
-            setValue('brand',data.brand);
-            setValue('category',data.category);
-            setValue('description',data.description);
-            setValue('price',data.price);
-            setValue('countInStock',data.countInStock);
-            setValue('condition',data.condition);
-            setImageUrl(data.image);
+
+        if(product2Edit){
+            setValue('productName',product2Edit.name);
+            setValue('brand',product2Edit.brand);
+            setValue('category',product2Edit.category);
+            setValue('description',product2Edit.description);
+            setValue('price',product2Edit.price);
+            setValue('countInStock',product2Edit.count_in_stock);
+            setValue('condition',product2Edit.condition);
+            setImageUrl(product2Edit.image);
         }
     },[setValue]);
 
@@ -69,11 +66,11 @@ function EditProduct() {
               })
         }
     } 
-    const editProduct = async ({productName,brand,category,description,price,productImage,countInStock,condition}) => {
+    const editProduct = async ({productName,brand,category,description,price,countInStock,condition}) => {
         try {
-            const {data} = await axios.put("/api/admin/products/edit",{productName,brand,category,description,price,image:"/path-to-image/image.jpg",countInStock,condition,admin:session.user.id});
+            const {data} = await axios.put("/api/admin/products/edit",{productName,brand,category,description,price,image:imageUrl,countInStock,condition,admin:session.user.id,id:product2Edit.product_id});
             if(data.message === "success"){
-                setSuccess(`Successfully Created ${productName}`);
+                setSuccess(`Successfully Edited ${productName}`);
                 window.scrollTo({
                     top: 0,
                     left: 100,
@@ -90,9 +87,9 @@ function EditProduct() {
     return (
     <Layout>
         <div className='min-w-lg '>
-            <h1 className='text-center text-3xl m-7'>Create Product</h1>
-            <Link href='/admin/products' className='my-5'>
-                <Button color='light'>
+            <h1 className='text-center text-3xl m-7'>Edit Product</h1>
+            <Link href='/admin/products' >
+                <Button color='light' className='my-5 mb-10'>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 mx-2 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
                     </svg>
@@ -182,29 +179,46 @@ function EditProduct() {
                         {errors.condition && (<div className="text-red-500">{errors.condition.message}</div>)}
                     </div>
 
-                    <button type='submit' className='big-button' onClick={handleSubmit(editProduct)}>Create</button>
+                    <button type='submit' className='big-button' onClick={handleSubmit(editProduct)}>Edit</button>
                 </form>
-                 <form id="preview" className={!isFormActive ? "floater" : "hidden"}>
-                    <div className='flex'>
-                        <div className='w-full'>
-                            <h3 className={isFormActive ? "text-blue-500 cursor-pointer" : "hover:font-bold cursor-pointer"}  onClick={()=>setIsFormActive(true)}>Form</h3>
-                            <div className={isFormActive ? "h-[3px] w-full bg-blue-500" : "h-[2px] w-full bg-gray-500" }></div>
+                <div className=''>
+                    <form id="preview" className={!isFormActive ? "floater overflow-x-auto min-w-[400px]" : "hidden"}>
+                        <div className='flex'>
+                            <div className='w-full'>
+                                <h3 className={isFormActive ? "text-blue-500 cursor-pointer" : "hover:font-bold cursor-pointer"}  onClick={()=>setIsFormActive(true)}>Form</h3>
+                                <div className={isFormActive ? "h-[3px] w-full bg-blue-500" : "h-[2px] w-full bg-gray-500" }></div>
+                            </div>
+                            <div className='w-full'>
+                                <h3 className={!isFormActive ? "text-blue-500 cursor-pointer" : "hover:font-bold cursor-pointer"} onClick={()=>setIsFormActive(false)}>Preview</h3>
+                                <div className={!isFormActive ? "h-[3px] w-full bg-blue-500" : "h-[2px] w-full bg-gray-500" }></div>
+                            </div>
                         </div>
-                        <div className='w-full'>
-                            <h3 className={!isFormActive ? "text-blue-500 cursor-pointer" : "hover:font-bold cursor-pointer"} onClick={()=>setIsFormActive(false)}>Preview</h3>
-                            <div className={!isFormActive ? "h-[3px] w-full bg-blue-500" : "h-[2px] w-full bg-gray-500" }></div>
-                        </div>
-                    </div>
-                    <Card className="max-w-sm mt-6 border-2" renderImage={() => <Image width={150} height={150} src="/images/logos and icons/decode-logo.png" alt="productImage" />}>
-                        <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">{productName}</h5>
-                        <p className=" tracking-tight text-gray-900 dark:text-white break-words">{description}</p>
-                        <p className=" tracking-tight text-gray-900 dark:text-white"><span className='font-bold'>Brand:</span>{brand}</p>
-                        <p className=" tracking-tight text-gray-900 dark:text-white"><span className='font-bold'>Category:</span>{category}</p>
-                        <p className=" tracking-tight text-gray-900 dark:text-white"><span className='font-bold'>Price:</span>{price}</p>
-                        <p className=" tracking-tight text-gray-900 dark:text-white"><span className='font-bold'>Count in Stock:</span>{countInStock}</p>
-                        <p className=" tracking-tight text-gray-900 dark:text-white"><span className='font-bold'>Condition:</span>{condition}</p>
-                    </Card>
-                 </form> 
+                        <Card className="max-w-sm mt-6 border-2" renderImage={() => <img className='m-auto' width={150} height={150} src={imageUrl ? imageUrl : "/images/logos and icons/decode-logo.png"} alt="productImage" />}>
+                            <h5 className="text-center text-lg font-bold tracking-tight text-gray-900 dark:text-white">{productName}</h5>
+                            <p className="text-center tracking-tight text-gray-900 dark:text-white break-words"><h6 className='font-thin'>{description}</h6></p>
+                            <p className="text-center flex flex-col tracking-tight text-gray-900 dark:text-white">
+                                <span className='font-bold '>Brand</span>
+                                <span className='font-thin'>{brand}</span>
+                            </p>
+                            <p className="text-center flex flex-col tracking-tight text-gray-900 dark:text-white">
+                                <span className='font-bold '>Category</span>
+                                <span className='font-thin'>{category}</span>
+                            </p>
+                            <p className="text-center flex flex-col tracking-tight text-gray-900 dark:text-white">
+                                <span className='font-bold '>Price</span>
+                                <span className='font-thin'>{price}</span>
+                            </p>
+                            <p className="text-center flex flex-col tracking-tight text-gray-900 dark:text-white">
+                                <span className='font-bold '>Count in Stock</span>
+                                <span className='font-thin'>{countInStock}</span>
+                            </p>
+                            <p className="text-center flex flex-col tracking-tight text-gray-900 dark:text-white">
+                                <span className='font-bold '>Condition</span>
+                                <span className='font-thin'>{condition}</span>
+                            </p>
+                        </Card>
+                    </form> 
+                 </div>
             </div>
         </div>
     </Layout>
